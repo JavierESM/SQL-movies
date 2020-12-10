@@ -1,48 +1,50 @@
 var express = require('express');
+const { Op } = require('sequelize');
 var router = express.Router();
+let db = require("../database/models")
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'DH Movies' });
-});
 
-router.get('/movies', function (req, res) {
-  // devolver todas las peliculas
-
-  res.render('movies/index', {
-    movies : []
+router.get('/', function (req, res) {
+  db.Movies.findAll().then(movies => res.render("movies/show", {movies})).catch(function(errors){
+    console.log(errors)
   })
 })
 
 router.get('/movies/new', function (req, res) {
-  // buscar la lista de todos los generos para visualizar en el formulario
+db.Movies.findAll({
+  order : [
+    ["release_date", "DESC"],
+  ],
+  limit: 5
+}).then(movies => res.render("movies/show", {movies})).catch(function(errors){
+  console.log(errors)
+})
+})
 
-  res.render('movies/create', {
-    genres : []
+router.get("/movies/recommended", function(req, res){
+db.Movies.findAll({
+  where : {
+    rating :{[Op.gte] : 8}}
+}).then(movies => res.render("movies/show", {movies})).catch(function(errors){
+  console.log(errors)
+})
+})
+
+router.post('/movies/search', function (req, res) {
+ let busqueda = req.body.search
+
+  db.Movies.findAll({
+    where : {
+      title: {[Op.like] : `%${busqueda}%`}
+    }
+  }).then(movies => res.render("movies/show", {movies})).catch(function(errors){
+    console.log(errors)
   })
 })
 
-router.get('/movies/:id', function (req, res) {
-  // devolver solo la pelicula especificada por el id
 
-  res.render('movies/show', {
-    movie : movie 
-  })
-})
 
-router.get('/movies/:id/edit', function (req, res) {
-  res.render('movies/edit', {
-    genres : [],
-    movie : movie,
-  })
-})
 
-router.patch('/movies/:id', function (req, res) {
-  res.redirect('/movies')
-})
-
-router.delete('/movies/:id', function (req, res) {
-  // devolver solo la pelicula especificada por el id
-})
 
 module.exports = router;

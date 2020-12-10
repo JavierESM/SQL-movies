@@ -10,13 +10,19 @@
 </head>
 
 <body>
+    <form action="/movies/search" method="POST">
+    <input type="text" name="search" id="search" placeholder="Busque sus peliculas favoritas aquí...">
+    <button type="submit">Buscar</button>
+    </form>
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1><%= movie.title %></h1>
-                <p>Fecha de lanzamiento <%= movie.release_date %></p>
-                <p>Rating <%= movie.rating %></p>
-                <p>Premios obtenidos <%= movie.awards %></p>
+                <% for (let i = 0; i < movies.length; i++) { %>
+                <h1><%= movies[i].title %></h1>
+                <p>Fecha de lanzamiento: <%= movies[i].release_date %></p>
+                <p>Rating: <%= movies[i].rating %></p>
+                <p>Premios obtenidos: <%= movies[i].awards %></p>
+                <% } %>
             </div>
         </div>
     </div>
